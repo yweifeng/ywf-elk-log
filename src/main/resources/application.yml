@@ -1,0 +1,20 @@
+server:
+  port: 8008
+
+spring:
+  application:
+    name: ywf-elk-log
+  kafka:
+    producer:
+      acks: all #acks:消息的确认机制，默认值是0， acks=0：如果设置为0，生产者不会等待kafka的响应。 acks=1：这个配置意味着kafka会把这条消息写到本地日志文件中，但是不会等待集群中其他机器的成功响应。 acks=all：这个配置意味着leader会等待所有的follower同步完成。这个确保消息不会丢失，除非kafka集群中所有机器挂掉。这是最强的可用性保证。
+      retries: 3 #发送失败重试次数，配置为大于0的值的话，客户端会在消息发送失败时重新发送。
+      batch-size: 16384 #当多条消息需要发送到同一个分区时，生产者会尝试合并网络请求。这会提高client和生产者的效率。
+      buffer-memory: 33554432 #即32MB的批处理缓冲区
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      bootstrap-servers: 192.168.111.128:9092,192.168.111.129:9092,192.168.111.130:9092 #如果kafka启动错误，打开debug级别日志，出现Can't resolve address: flink:9092 的错误
+logging:
+  file: ywf-elk-log.log
+  level:
+    #    root: debug #开启dubug级别
+    com.kafka: debug
